@@ -1,4 +1,4 @@
-# Functional Map
+# Functional Map
 
 > A map of the functional programming world
 
