@@ -4,4 +4,4 @@ title: "Pattern matching"
 permalink: /concepts/pattern-matching
 ---
 
-## Pattern matching
+# Pattern matching

@@ -4,4 +4,4 @@ title: "Sum types"
 permalink: /concepts/sum-types
 ---
 
-## Sum types
+# Sum types
