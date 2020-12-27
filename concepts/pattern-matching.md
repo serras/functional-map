@@ -13,9 +13,11 @@ and may also extract from within the matched expression some information (as var
 
 Ideally, the _cases_ in a pattern-matching block should be **exhaustive**, so every value of the matched expression
 is covered by one case, and **mutually exclusive**, so no value of the expression can match more than one case. 
-However, automatically checking these conditions can be a very difficult problem. In practice, most 
+However, automatically checking these conditions can be a very difficult problem. 
 
-
+Pattern-matching is closely related to the use of [Algebraic Data Types](---), and their _generalised_ counterparts.
+Intuitively, if a data type can be built using one of several data constructors, to process a value of this type
+we would use a pattern-match with a case for each data constructor.
 
 
 ## Pattern Matching in Languages
@@ -41,21 +43,31 @@ and nested within it is the `9` integer literal, which is another pattern.
 The [`LambdaCase`](https://ghc.gitlab.haskell.org/ghc/doc/users_guide/exts/lambda_case.html) GHC extension allows writing a function literal
 (a lambda expression) just as a group of cases.
 
-
-#### 
+```Haskell
+elem :: Eq a => a -> [a] -> Bool
+elem x = \case
+    [] -> False
+    y:ys -> if x == y then True else elem x ys
+```
 
 
 ### Scala
 
-Scala (as of the versions 2.x) provides a powerful and completely user-customisable form of pattern matching.
+> - [Pattern matching in the Scala 2 documentation](https://docs.scala-lang.org/tour/pattern-matching.html)
+> - [Changes in the Scala 3 language](https://dotty.epfl.ch/docs/reference/changed-features/match-syntax.html).
+
+Scala provides a powerful and completely user-customisable form of pattern matching.
+
+The syntax for pattern-matching in Scala can be seen in the links above.
 
 
 #### Unapply methods
 
-In Scala, pattern-matching is implemented not as a language construct, but also as syntactic 
+In Scala, pattern-matching is implemented not as a language construct, but as a form of syntactic sugar
 
-Every object, be it a static `object` declaration, or an instance of a `class`, can be used as a pattern
-_if_ its signature includes an `unapply` method, which can be 
+Every object, be it a static `object` declaration or an instance of a `class`, can be used as a pattern
+_if_ its signature includes an `unapply` method, that is, if it is an [Extractor object](https://docs.scala-lang.org/tour/extractor-objects.html).
+
 
 ```Scala
 
@@ -184,7 +196,6 @@ request match {
 In `http4s`, those
 
 We can then 
-
 
 
 
