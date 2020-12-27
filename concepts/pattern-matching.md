@@ -13,8 +13,12 @@ and may also extract from within the matched expression some information (as var
 
 Ideally, the _cases_ in a pattern-matching block should be **exhaustive**, so every value of the matched expression
 is covered by one case, and **mutually exclusive**, so no value of the expression can match more than one case. 
-However, automatically checking these conditions can be a very difficult problem, and in practice 
+However, automatically checking these conditions can be a very difficult problem. In practice, most 
 
+
+
+
+## Pattern Matching in Languages
 
 ### Haskell
 
@@ -30,9 +34,6 @@ fili xs = case xs of
 ```
 The pattern for the first case has at the top level `Just` (a data constructor for the `Maybe` type), 
 and nested within it is the `9` integer literal, which is another pattern.
-
-
-
 
 
 #### Function literals 
@@ -112,7 +113,6 @@ val bowRoad = new LowerUnspaced("Bow Road")
 }
 ```
 
-
 Rather than adding a call to the `.toLowerCase` method every time 
 
 ##### Example: http responses
@@ -141,7 +141,6 @@ response match {
 }
 ```
 
-
 ##### Example: abstracting HTTP routes
 
 Having patterns as `unapply` methods means that, in Scala, patterns are objects, which is to say, 
@@ -153,13 +152,34 @@ Using `http4s` again, suppose we have a REST application with many endpoints, wh
 to each other: 
 
 ``` Scala
-// again very simplified 
+// again very simplified CRUD-like API
 
 request match {
-  case GET -> Root :/ 
+  case GET    -> "countries" :/ country / "regions" / region / "cities" / city => /***/
+  case PUT    -> "countries" :/ country / "regions" / region / "cities" / city => /**/
+  case DELETE -> "countries" :/ country / "regions" / region / "cities" / city => /**/
 }
 
 ```
+Instead of repeating the initial part of the path in each pattern, which can get very large, 
+one can instead abstract that part as a single pattern: 
+
+``` Scala
+object CityPath {
+  def unapply(path: Path): Option[(String, String, String)] = path match {
+    case  "countries" :/ country / "regions" / region / "cities" / city => Some(country, region, city)
+    case _ => None
+  }
+}
+
+request match {
+  case GET    -> CityPath(country, region, city) => /***/
+  case PUT    -> CityPath(country, region, city) => /***/
+  case DELETE -> CityPath(country, region, city) => /***/
+}
+```
+
+
 
 In `http4s`, those
 
@@ -178,7 +198,7 @@ of the function.
 
 #### Variables
 
-- Matching against other variables in scope, using the backtick notation: 
+We can use any variable in scope as a pattern, using equality, by using the backtick notation: 
 
 ```Scala
 
@@ -190,18 +210,18 @@ evalLoop match {
 }
 ```
 
-
-
 ### Kotlin
 
 Kotlin uses [`when` expressions](https://kotlinlang.org/docs/reference/control-flow.html#when-expression) that can be used 
 for matching either primitive values or [`Sealed Classes`](https://kotlinlang.org/docs/reference/sealed-classes.html).
+When used with sealed classes 
 
-
-#### Others
+### Other languages
 
 Simpler languages such as `C`, `C++` and `Java` provide a feature.
 Note that these three are imperative languages, and thus the `switch` construction is a control-flow _statement_, not an expression. 
 Therefore, it is not possible in those languages to _assign_ to a variable the result of a `switch`, or to pass 
 a `switch` as parameter for a function.
 
+
+Future versions of Java is soon introducing its own variant of _sealed classes_ with a special 
