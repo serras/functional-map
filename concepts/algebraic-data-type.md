@@ -14,16 +14,18 @@ of the ADT there is no way to _extend_ it with alternative constructors.
 This is in contrast to abstract classes in object-oriented languages, such as Java or Go, 
 which are **open** for the user to extend with new subclasses.
 
-
 Because an ADT can be seen as an alternative of records, where each record is a combination of several fields, 
-in the "categorical" jargon ADTs are often described as "sum of products".
+in the "categorical" jargon ADTs are often described as "sum of products", where each value constructor is a product.
+
+An ADT can be generic on one or more type parameters. If so, then all value constructors must have the same type parameters.
+
+A generic ADT in which a value constructor binds a type parameter to either a concrete type or another type parameter 
+is called a _Generalised Abstract Data Type_. 
 
 
 ## Cross-language comparison
 
-
 ### Haskell
-
 
 ### Scala 2
 
@@ -37,10 +39,34 @@ The Scala language (version 2) provides low-lever support for ADTs using sealed 
   every field being immutable and public, and a copy method.
 
 
+The same pattern can also suport Generalised Abstract Data Types,
+simply by using concrete types in the `extend` clause of the subclasses.
+
+``` scala
+sealed trait Command[A]
+case class GetInt() extends Command[Int]
+case class GetChar() extends Command[Char]
+```
+
+One common pattern is to combine generics, _variance_, and the types `Any` and `Nothing`
+when defining an ADT that, for some cases, cannot return a value of the generic type.
+One simple example being the `Option` type:
+
+``` scala
+sealed trait Option[+ A]
+case class Some[+ A](value: A) extends Option[A]
+case class None extends Option[Nothing]
+```
+
+In the `None` case class we cannot provide any value of type `A`, so we use the covariance of `Option` on `A`, 
+and bind the `A` type to `Nothing`, the bottom type. 
+This is the (contorted) way of stating that the `None` object is an `Option[A]` for any type `A`.
+
+
 #### Value constructors vs types.
 
-Note that, unlike in Haskell, each case class in Scala does not merely declare a value constructor for a type, 
-but it also declares a type. For example, `Some[A]` is a subtype of `Option[A]` and thus a way to build a 
+Each case class in the ADT is not just a constructor for values of the ADT, but it is a type as well. 
+For example, `Some[A]` is a subtype of `Option[A]` and thus a way to build a 
 value of the ADT `Option[A]`, but `Some[_]` is also a distinct type to Scala type-system.
 
 Thus, one can declare variables, class fields, function parameters, or function result types as `Some`: 
