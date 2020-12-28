@@ -225,7 +225,10 @@ evalLoop match {
 
 Kotlin uses [`when` expressions](https://kotlinlang.org/docs/reference/control-flow.html#when-expression) that can be used 
 for matching either primitive values or [`Sealed Classes`](https://kotlinlang.org/docs/reference/sealed-classes.html).
-When used with sealed classes 
+However, pattern matching for sealed classes is more limited than in Scala.
+A pattern is either a runtime type check, or a reference to a static object.
+No inner values are extracted, and no guards are used.
+This provides for a trivial exhaustiveness check.
 
 ### Other languages
 
@@ -233,6 +236,5 @@ Simpler languages such as `C`, `C++` and `Java` provide a feature.
 Note that these three are imperative languages, and thus the `switch` construction is a control-flow _statement_, not an expression. 
 Therefore, it is not possible in those languages to _assign_ to a variable the result of a `switch`, or to pass 
 a `switch` as parameter for a function.
-
 
 Future versions of Java is soon introducing its own variant of _sealed classes_ with a special 
